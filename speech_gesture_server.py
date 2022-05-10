@@ -131,6 +131,7 @@ def run_server(robot_IP, port):
             
             motionProxy.post.angleInterpolation(names, angleLists, [1,1], True)
             time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
+            logging.info("Wait Time: " + time_to_next_action)
             time.sleep(1)
             
 # mostly from previous code, some changes to enable referencing (head movement)
