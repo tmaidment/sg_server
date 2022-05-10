@@ -123,7 +123,7 @@ def run_server(robot_IP, port):
                 time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
                 if roll < 0.375 and STUDENT_A_ENABLED:
                     angleLists = STUDENT_A_ANGLES
-                    logging.info("Focus: Student A ({})".format())
+                    logging.info("Focus: Student A ({})".format(time_to_next_action))
                 elif roll < 0.75 and STUDENT_B_ENABLED:
                     angleLists = STUDENT_B_ANGLES
                     logging.info("Focus: Student B ({})".format(time_to_next_action))
