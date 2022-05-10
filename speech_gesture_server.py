@@ -1,4 +1,3 @@
-import random
 import sys
 import os
 from naoqi import ALProxy
@@ -9,6 +8,7 @@ from gensim.summarization.textcleaner import get_sentences
 from datetime import datetime, timedelta
 from gestures import *
 import logging
+from numpy import random
 
 # added by Tristan (5/9/22)
 ROBOT_IP = "10.216.112.110"
@@ -26,6 +26,9 @@ STUDENT_B_REFERENCE_ENABLED = True
 
 STUDENT_A_NAME = "Student A." # keep the trailing period so that the timing from TTS isn't too fast
 STUDENT_B_NAME = "Student B." # e.g. "Timmy." or "Spongebob."
+
+MEAN_ACTION_TIME = 10 # The average amount of time between actions
+STD_ACTION_TIME = 4 # Standard deviation for sampling time between actions
 
 # YAW, PITCH
 # This needs to be set up for the specific table setup
@@ -82,6 +85,7 @@ def run_server(robot_IP, port):
 
     ## Set last motion time
     motion_time = datetime.now()
+    time_to_next_action = 10
 
     names = ["HeadYaw", "HeadPitch"]
     angleLists = [[ 0 * almath.TO_RAD], [0 * almath.TO_RAD]]
@@ -112,7 +116,7 @@ def run_server(robot_IP, port):
             socket.send(b"complete")
         except:
             # if no commands, look around
-            if datetime.now() > motion_time + timedelta(0,5):
+            if datetime.now() > motion_time + timedelta(0,time_to_next_action):
                 roll = random.uniform(0, 1)
                 if roll < 0.375 and STUDENT_A_ENABLED:
                     angleLists = STUDENT_A_ANGLES
@@ -126,6 +130,7 @@ def run_server(robot_IP, port):
                 motion_time = datetime.now()
             
             motionProxy.post.angleInterpolation(names, angleLists, [1,1], True)
+            time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
             time.sleep(1)
             
 # mostly from previous code, some changes to enable referencing (head movement)
