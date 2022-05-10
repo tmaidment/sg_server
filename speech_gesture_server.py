@@ -85,7 +85,7 @@ def run_server(robot_IP, port):
 
     ## Set last motion time
     motion_time = datetime.now()
-    time_to_next_action = 10
+    time_to_next_action = MEAN_ACTION_TIME
 
     names = ["HeadYaw", "HeadPitch"]
     angleLists = [[ 0 * almath.TO_RAD], [0 * almath.TO_RAD]]
@@ -111,6 +111,8 @@ def run_server(robot_IP, port):
              "RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"])
             nonProbabilisticMovement(motionProxy, faceProxy, tts, line)
             motion_time = datetime.now()
+            time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
+            logging.info("Wait Time: " + str(time_to_next_action))
 
             #  Send reply back to client
             socket.send(b"complete")
@@ -128,10 +130,10 @@ def run_server(robot_IP, port):
                     angleLists = MONITOR_ANGLES
                     logging.info("Focus: Monitor")
                 motion_time = datetime.now()
+                time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
+                logging.info("Wait Time: " + str(time_to_next_action))
             
             motionProxy.post.angleInterpolation(names, angleLists, [1,1], True)
-            time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
-            logging.info("Wait Time: " + time_to_next_action)
             time.sleep(1)
             
 # mostly from previous code, some changes to enable referencing (head movement)
