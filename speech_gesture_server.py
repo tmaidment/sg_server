@@ -120,18 +120,17 @@ def run_server(robot_IP, port):
             # if no commands, look around
             if datetime.now() > motion_time + timedelta(0,time_to_next_action):
                 roll = random.uniform(0, 1)
+                time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
                 if roll < 0.375 and STUDENT_A_ENABLED:
                     angleLists = STUDENT_A_ANGLES
-                    logging.info("Focus: Student A")
+                    logging.info("Focus: Student A ({})".format())
                 elif roll < 0.75 and STUDENT_B_ENABLED:
                     angleLists = STUDENT_B_ANGLES
-                    logging.info("Focus: Student B")
+                    logging.info("Focus: Student B ({})".format(time_to_next_action))
                 elif MONITOR_ENABLED:
                     angleLists = MONITOR_ANGLES
-                    logging.info("Focus: Monitor")
+                    logging.info("Focus: Monitor ({})".format(time_to_next_action))
                 motion_time = datetime.now()
-                time_to_next_action = random.normal(MEAN_ACTION_TIME, STD_ACTION_TIME)
-                logging.info("Wait Time: " + str(time_to_next_action))
             
             motionProxy.post.angleInterpolation(names, angleLists, [1,1], True)
             time.sleep(1)
